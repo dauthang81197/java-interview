@@ -47,42 +47,69 @@ public final class Bai02JrBoxing {
     }
 
     public static boolean integerCacheSmall() {
-        throw Todo.todo("JR-02");
+        Integer a = 127;
+        Integer b = 127;
+        return a == b; // return true because Integer cache values from -128 to 127
+      // so a and b reference the same object
     }
 
     public static boolean integerCacheLarge() {
-        throw Todo.todo("JR-02");
+        Integer a = 128;
+        Integer b = 128;
+        return a == b; // return false because Integer cache values from -128 to 127
     }
 
     public static boolean longEqualsInt() {
-        throw Todo.todo("JR-02");
+        return Long.valueOf(1L).equals(1); // false
+        // Because method equals cannot accept primitive types, so
+        // Java automatically convert 1 to a Integer Object
+
     }
 
     public static boolean unboxNullThrows() {
-        throw Todo.todo("JR-02");
+        Integer x = null;
+        try {
+            int y = x;
+            // Unboxing o day se chuyen tu Integer sang int, nhung x null thif se bi loi
+            return false;
+        } catch (NullPointerException e) {
+            return true;
+        }
+
     }
 
     public static boolean nanPrimitiveEqualsItself() {
-        throw Todo.todo("JR-02");
+            double x = Double.NaN;
+            return x == x; // false , NaN không bằng bất kỳ giá trị nào, kể cả chính nó.
     }
 
     public static boolean nanBoxedEqualsItself() {
-        throw Todo.todo("JR-02");
+        Double x = Double.valueOf(Double.NaN);
+        return x.equals(x);
     }
 
     public static int sumIgnoringNulls(List<Integer> numbers) {
-        throw Todo.todo("JR-02");
+        int sum = 0;
+
+        for (Integer x : numbers) {
+            if (x != null) {
+                sum += x;
+            }
+        }
+
+        return sum;
     }
 
     public static boolean sameValue(Integer a, Integer b) {
-        throw Todo.todo("JR-02");
+        return java.util.Objects.equals(a, b);
     }
 }
 
 // ===== KHU VỰC GHI CHÚ CỦA BẠN =====
 // DỰ ĐOÁN:
-//
-//
+// false
+// false, equals 1L, because different type
+// int x = (Integer) null Throw null point exception , Double.NaN == Double.NaN khong biet
 // GIẢI THÍCH:
 //
 //
