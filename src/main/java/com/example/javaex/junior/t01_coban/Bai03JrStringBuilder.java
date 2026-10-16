@@ -2,6 +2,8 @@ package com.example.javaex.junior.t01_coban;
 
 import com.example.javaex.Todo;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -45,34 +47,98 @@ public final class Bai03JrStringBuilder {
     }
 
     public static String repeat(String s, int times) {
-        throw Todo.todo("JR-03");
+       StringBuilder sb = new StringBuilder();
+       if( times < 0){
+           throw new IllegalArgumentException("times must be >= 0");
+       }
+        sb.repeat(String.valueOf(s), Math.max(0, times));
+       return sb.toString();
     }
 
     public static String reverse(String s) {
-        throw Todo.todo("JR-03");
+        char[] chars = s.toCharArray();
+        for (int i = 0, j = chars.length - 1; i < j; i++, j--) {
+            char tmp = chars[i];
+            chars[i] = chars[j];
+            chars[j] = tmp;
+        }
+        return new String(chars);
     }
 
     public static boolean isPalindrome(String s) {
-        throw Todo.todo("JR-03");
+        if (s.isEmpty()) return true;
+        int left = 0, right = s.length() - 1;
+        while (left < right) {
+            // bỏ qua ký tự không phải chữ/số ở cả hai phía (dùng while để bỏ qua nhiều ký tự liên tiếp)
+            while (left < right && !Character.isLetterOrDigit(s.charAt(left))) left++;
+            while (left < right && !Character.isLetterOrDigit(s.charAt(right))) right--;
+            if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) return false;
+            left++;
+            right--;
+        }
+        return true;
     }
 
     public static Map<Character, Integer> charFrequency(String s) {
-        throw Todo.todo("JR-03");
+        HashMap<Character, Integer> map = new LinkedHashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            map.merge(c, 1, Integer::sum);
+        }
+        return map;
     }
 
     public static String capitalizeWords(String s) {
-        throw Todo.todo("JR-03");
+        if(s == null || s.isEmpty()) {
+            return s;
+        }
+
+        String[] words = s.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1).toLowerCase()).append(" ");
+        }
+        return sb.toString().trim();
     }
 
     public static int countOccurrences(String text, String sub) {
-        throw Todo.todo("JR-03");
+        if(text == null || sub == null || sub.isEmpty()) {
+            return 0;
+        }
+        // text = abcdabc , sub = abc;
+        int index = text.indexOf(sub);
+        int count = 0;
+        while(index >= 0) {
+            count++;
+            text = text.substring(index + sub.length());
+            index = text.indexOf(sub);
+        }
+        return count;
     }
 }
 
 // ===== KHU VỰC GHI CHÚ CỦA BẠN =====
 // DỰ ĐOÁN:
-//
-//
+// Because String is immutable, cannot change content when create,
+// We should use string builder
+// s.toUpperCase() can't change value of s
+// Khoong bieest A man, a plan, a canal: Panama
+// String is imumtable, so repeated concatenation may create many intermediate objects
+// StringBuilder is more efficient for repeared concatenation in a loop
 // GIẢI THÍCH:
-//
-//
+// String is immtable because
+// public final class String {          // final: không ai kế thừa để "lách" được
+//    private final byte[] value;      // private + final: không truy cập/gán lại từ ngoài
+//    private int hash;                // cache hashCode (nói ở dưới)
+//    ...
+//} String a = "java";
+//String b = "java";  a==b because a and b use same String Pool
+// if String c = new String("java") so a != c because c create a new Object on heap, so diffrent and create new object in poo;
+
+// hashCode with O(n), so String never change value so HashCode never change
+// Thread safe can readd multi thread becauase String never change value
+// String is immutable, so String Pool can save memory
+// String builder and StringBuffer are same about change value, because StringBuilder don't safe for thread
+// and StringBuffer can safe thread with synchronized
+// With Performance, StringBuilder faster than StringBuffer
+
