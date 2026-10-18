@@ -44,34 +44,68 @@ public final class Bai04JrPassByValue {
     }
 
     public static void fill(int[] arr, int value) {
-        throw Todo.todo("JR-04");
+        for(int i=0; i<arr.length; i++) {
+            arr[i] = value;
+        }
     }
 
     public static void tryReassign(int[] arr) {
-        throw Todo.todo("JR-04");
+        arr = new int[]{9, 9, 9};
     }
 
     public static String appendBang(String s) {
-        throw Todo.todo("JR-04");
+        return s + "!";
     }
 
     public static void appendBang(StringBuilder sb) {
-        throw Todo.todo("JR-04");
+        sb.append("!");
     }
 
     public static int[] swappedCopy(int[] pair) {
-        throw Todo.todo("JR-04");
+        if (pair.length != 2) {
+            throw new IllegalArgumentException("pair must have exactly 2 elements");
+        }
+        return new int[]{pair[1], pair[0]};
     }
 
     public static void addItem(List<String> list, String item) {
-        throw Todo.todo("JR-04");
+        list.add(item);
     }
 }
 
 // ===== KHU VỰC GHI CHÚ CỦA BẠN =====
 // DỰ ĐOÁN:
-//
+// - Gán lại tham số mảng (arr = new int[]{...}): mảng của người gọi KHÔNG đổi.
+// - Sửa phần tử arr[0]: người gọi CÓ thấy. Hai kết quả khác nhau vì tham số arr là bản sao
+//   của tham chiếu; cả hai cùng trỏ tới một mảng trên heap. Sửa phần tử = đi theo tham chiếu
+//   rồi sửa mảng đó; gán lại = chỉ đổi bản sao tham chiếu, mảng gốc và biến của người gọi giữ nguyên.
+// - appendBang(String): KHÔNG đổi String của người gọi, vì String bất biến, "+" tạo object mới.
 //
 // GIẢI THÍCH:
+// Java luôn pass-by-value: tham số nhận một BẢN SAO của giá trị đối số.
+// - Với primitive, giá trị là chính số đó.
+// - Với object/mảng, giá trị là tham chiếu (địa chỉ); bản sao tham chiếu vẫn trỏ tới cùng object trên heap.
 //
+// Sơ đồ stack/heap cho tryReassign:
+//   Trước khi gọi:   main: a ──► [1,2,3]  (heap)
+//   Trong hàm:       main: a ──► [1,2,3]
+//                    tryReassign: arr ──► [1,2,3]      (arr là bản sao của a)
+//   Sau arr = new int[]{9,9,9}:
+//                    main: a ──► [1,2,3]
+//                    tryReassign: arr ──► [9,9,9]      (chỉ arr đổi hướng)
+//   Hàm kết thúc: frame tryReassign bị bỏ khỏi stack, [9,9,9] không còn ai trỏ tới → GC thu hồi.
+//   Mỗi lần gọi hàm tạo một stack frame riêng, bỏ đi khi hàm kết thúc. Object trên heap sống
+//   tới khi không còn tham chiếu nào (GC dọn), không phụ thuộc hàm kết thúc.
 //
+// MỞ RỘNG:
+// - swap(int a, int b) không viết được: a, b là bản sao của primitive, đổi chúng không ảnh hưởng
+//   biến gốc. Cách khác: dùng mảng và đổi phần tử, hoặc trả về cặp mới (như swappedCopy), hoặc object bọc.
+// - final parameter chỉ cấm gán lại tham số; KHÔNG cấm sửa nội dung object nó trỏ tới
+//   (final List<String> l; l.add("x") vẫn được).
+//
+// TRẢ LỜI CÂU HỎI:
+// - Java là pass-by-value (giá trị của tham chiếu), không phải pass-by-reference.
+// - String bất biến: không có phương thức nào sửa nội dung tại chỗ, mọi thao tác đều tạo String mới,
+//   nên hàm nhận String không thể làm đổi String của người gọi.
+// - Gán lại tham số: chỉ đổi bản sao tham chiếu trong stack, không ảnh hưởng người gọi.
+//   Sửa nội dung object: đổi dữ liệu trên heap, người gọi thấy vì cùng trỏ tới object đó.
