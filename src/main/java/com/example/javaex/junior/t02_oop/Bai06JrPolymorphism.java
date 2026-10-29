@@ -4,6 +4,8 @@ import com.example.javaex.Todo;
 
 import java.util.List;
 
+import static java.lang.Math.PI;
+
 /**
  * Bài 06. Kế thừa, đa hình, override và overload  [Cấp độ: Junior]  (JR-06)
  * Chủ đề: OOP
@@ -52,24 +54,27 @@ public final class Bai06JrPolymorphism {
     }
 
     public static class Circle extends Shape {
+        private final double r;
         public Circle(double radius) {
-            throw Todo.todo("JR-06");
+            this.r = radius;
         }
 
         @Override
         public double area() {
-            throw Todo.todo("JR-06");
+            return PI * r * r;
         }
     }
 
     public static class Rectangle extends Shape {
+        private final double w, h;
         public Rectangle(double width, double height) {
-            throw Todo.todo("JR-06");
+            this.w = width;
+            this.h = height;
         }
 
         @Override
         public double area() {
-            throw Todo.todo("JR-06");
+            return w * h;
         }
     }
 
@@ -81,23 +86,29 @@ public final class Bai06JrPolymorphism {
     }
 
     public static double totalArea(List<? extends Shape> shapes) {
-        throw Todo.todo("JR-06");
+        if (shapes.isEmpty()) {
+            return 0;
+        }
+
+        return shapes.stream().mapToDouble(Shape::area).sum();
     }
 
     public static String which(Shape s) {
-        throw Todo.todo("JR-06");
+        return s instanceof Circle ? "circle" : "shape";
     }
 
     public static String which(Circle c) {
-        throw Todo.todo("JR-06");
+        return c.getClass().getSimpleName();
     }
 
     public static String overloadByStaticType() {
-        throw Todo.todo("JR-06");
+        Shape s = new Circle(1);
+        return which(s);
     }
 
     public static String overrideByRuntimeType() {
-        throw Todo.todo("JR-06");
+        Shape s = new Square(2);
+        return s.name();
     }
 }
 
@@ -106,5 +117,7 @@ public final class Bai06JrPolymorphism {
 //
 //
 // GIẢI THÍCH:
-//
-//
+//   Shape s = new Circle(1);, Static type is Shape class and runtime type is Circle Class. so Overload is chose statuc type, for example: We are pick Shape class
+//   overload is same method and diffrent parameter
+//  With Override is chose runtime type, that mean sub class writeable from method of parent class, such as area()
+// because relation "is-a": Square is Rectangle have width == eight. so Square  just call super(side, side). Evething else (field, area(), name()) is  inherited from Rectangle and doesn’t need to be redefined.
